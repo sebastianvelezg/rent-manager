@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Users, Shield } from "lucide-react";
+import { Building2, Users, Shield, Home } from "lucide-react";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted p-4">
-      <div className="w-full max-w-4xl space-y-8">
+      <div className="w-full max-w-6xl space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold tracking-tight">Rent Manager</h1>
           <p className="text-muted-foreground text-lg">
@@ -14,7 +14,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-3">
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -37,6 +37,33 @@ export default function Home() {
               <Button className="w-full" asChild>
                 <Link href="/owner">
                   Go to Owner Dashboard
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Home className="h-6 w-6 text-green-600" />
+                </div>
+                <CardTitle>Renter</CardTitle>
+              </div>
+              <CardDescription>
+                Manage your rental, payments, and maintenance
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li>• Pay rent online</li>
+                <li>• Submit maintenance requests</li>
+                <li>• View payment history</li>
+                <li>• Access rental documents</li>
+              </ul>
+              <Button className="w-full" variant="default" asChild>
+                <Link href="/renter">
+                  Go to Renter Dashboard
                 </Link>
               </Button>
             </CardContent>
