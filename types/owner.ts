@@ -113,3 +113,57 @@ export interface MaintenanceRequest {
   images?: string[];
   cost?: number;
 }
+
+export interface OwnerMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderType: "owner" | "renter";
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  attachments?: {
+    name: string;
+    url: string;
+    type: string;
+  }[];
+}
+
+export interface OwnerConversation {
+  id: string;
+  participantId: string;
+  participantName: string;
+  participantRole: string;
+  propertyName?: string;
+  lastMessage: string;
+  lastMessageTime: Date;
+  unreadCount: number;
+  messages: OwnerMessage[];
+}
+
+export interface OwnerNotification {
+  id: string;
+  type: "payment" | "maintenance" | "inquiry" | "contract" | "message" | "general";
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  actionUrl?: string;
+  actionLabel?: string;
+  relatedId?: string;
+}
+
+export interface CalendarEvent {
+  id: string;
+  type: "payment" | "maintenance" | "contract" | "inspection" | "meeting";
+  title: string;
+  description?: string;
+  date: Date;
+  endDate?: Date;
+  propertyId?: string;
+  propertyName?: string;
+  renterId?: string;
+  renterName?: string;
+  status: "scheduled" | "completed" | "cancelled";
+  color?: string;
+}
