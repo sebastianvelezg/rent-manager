@@ -87,3 +87,39 @@ export interface RenterDocument {
   fileUrl?: string;
   fileSize?: string;
 }
+
+export interface RenterMessage {
+  id: string;
+  senderId: string;
+  senderName: string;
+  senderType: "renter" | "landlord";
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  attachments?: {
+    name: string;
+    url: string;
+    type: string;
+  }[];
+}
+
+export interface RenterConversation {
+  id: string;
+  participantName: string;
+  participantRole: string;
+  lastMessage: string;
+  lastMessageTime: Date;
+  unreadCount: number;
+  messages: RenterMessage[];
+}
+
+export interface RenterNotification {
+  id: string;
+  type: "payment" | "maintenance" | "document" | "message" | "contract" | "general";
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  actionUrl?: string;
+  actionLabel?: string;
+}
