@@ -6,6 +6,8 @@ import {
   RenterMaintenanceRequest,
   RenterDashboardStats,
   RenterDocument,
+  RenterConversation,
+  RenterNotification,
 } from "@/types/renter";
 
 // Current Renter Profile
@@ -289,5 +291,126 @@ export const renterRecentActivity = [
     title: "Pago procesado",
     description: "Pago de arriendo de octubre confirmado - $3.2M",
     timestamp: new Date("2025-10-04T11:15:00"),
+  },
+];
+
+// Messages and Conversations
+export const renterConversations: RenterConversation[] = [
+  {
+    id: "conv1",
+    participantName: "Carlos Rodríguez",
+    participantRole: "Propietario",
+    lastMessage: "Perfecto, el plomero llegará el viernes a las 10am",
+    lastMessageTime: new Date("2025-11-05T14:20:00"),
+    unreadCount: 0,
+    messages: [
+      {
+        id: "msg1",
+        senderId: "r1",
+        senderName: "Ana María Jiménez",
+        senderType: "renter",
+        message:
+          "Hola Carlos, te escribo porque hay una fuga de agua en el baño principal. El agua gotea constantemente del lavamanos.",
+        timestamp: new Date("2025-11-03T09:15:00"),
+        read: true,
+      },
+      {
+        id: "msg2",
+        senderId: "landlord1",
+        senderName: "Carlos Rodríguez",
+        senderType: "landlord",
+        message:
+          "Buenos días Ana María. Gracias por informarme. Voy a contactar al plomero de inmediato. ¿El problema es urgente o puedes esperar hasta el viernes?",
+        timestamp: new Date("2025-11-03T10:30:00"),
+        read: true,
+      },
+      {
+        id: "msg3",
+        senderId: "r1",
+        senderName: "Ana María Jiménez",
+        senderType: "renter",
+        message:
+          "Puedo esperar hasta el viernes sin problema. No es una fuga grande, solo un goteo constante.",
+        timestamp: new Date("2025-11-03T11:00:00"),
+        read: true,
+      },
+      {
+        id: "msg4",
+        senderId: "landlord1",
+        senderName: "Carlos Rodríguez",
+        senderType: "landlord",
+        message:
+          "Perfecto, el plomero llegará el viernes a las 10am. Te confirmo por este medio cuando esté en camino.",
+        timestamp: new Date("2025-11-05T14:20:00"),
+        read: true,
+      },
+    ],
+  },
+];
+
+// Notifications
+export const renterNotifications: RenterNotification[] = [
+  {
+    id: "notif1",
+    type: "maintenance",
+    title: "Actualización de mantenimiento",
+    message:
+      "El plomero visitará el apartamento el 8 de noviembre a las 10am para reparar la fuga de agua.",
+    timestamp: new Date("2025-11-05T14:20:00"),
+    read: false,
+    actionUrl: "/renter/maintenance",
+    actionLabel: "Ver detalles",
+  },
+  {
+    id: "notif2",
+    type: "payment",
+    title: "Recordatorio de pago",
+    message:
+      "Tu pago de arriendo de $3,200,000 vence el 5 de diciembre. Realiza tu pago a tiempo para evitar cargos adicionales.",
+    timestamp: new Date("2025-11-04T09:00:00"),
+    read: false,
+    actionUrl: "/renter/payments",
+    actionLabel: "Pagar ahora",
+  },
+  {
+    id: "notif3",
+    type: "payment",
+    title: "Pago confirmado",
+    message: "Tu pago de arriendo de noviembre por $3,200,000 ha sido confirmado.",
+    timestamp: new Date("2025-11-03T10:30:00"),
+    read: true,
+    actionUrl: "/renter/payments",
+    actionLabel: "Ver comprobante",
+  },
+  {
+    id: "notif4",
+    type: "document",
+    title: "Nueva factura disponible",
+    message: "La factura de diciembre 2025 está disponible para descargar.",
+    timestamp: new Date("2025-10-25T09:00:00"),
+    read: true,
+    actionUrl: "/renter/documents",
+    actionLabel: "Ver documento",
+  },
+  {
+    id: "notif5",
+    type: "maintenance",
+    title: "Mantenimiento completado",
+    message: "El bombillo de la cocina ha sido reemplazado exitosamente.",
+    timestamp: new Date("2025-10-30T16:45:00"),
+    read: true,
+    actionUrl: "/renter/maintenance",
+    actionLabel: "Ver detalles",
+  },
+  {
+    id: "notif6",
+    type: "contract",
+    title: "Renovación de contrato próxima",
+    message:
+      "Tu contrato vence el 1 de diciembre de 2025. Contacta a tu propietario para discutir la renovación.",
+    timestamp: new Date("2025-10-20T08:00:00"),
+    read: true,
+    actionUrl: "/renter/property",
+    actionLabel: "Ver contrato",
   },
 ];
