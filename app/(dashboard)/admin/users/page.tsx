@@ -85,6 +85,9 @@ export default function UsersPage() {
     return matchesSearch && matchesRole && matchesStatus;
   });
 
+  const ownerUsers = filteredUsers.filter((user) => user.role === "owner");
+  const renterUsers = filteredUsers.filter((user) => user.role === "renter");
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedUsers(filteredUsers.map((u) => u.id));
@@ -149,6 +152,165 @@ export default function UsersPage() {
       </Badge>
     );
   };
+
+  const renderUserTable = (users: User[], showDetails = false) => (
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-12">
+              <Checkbox
+                checked={
+                  selectedUsers.length === users.length &&
+                  users.length > 0
+                }
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setSelectedUsers(users.map((u) => u.id));
+                  } else {
+                    setSelectedUsers([]);
+                  }
+                }}
+              />
+            </TableHead>
+            <TableHead>User</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Contact</TableHead>
+            <TableHead>Location</TableHead>
+            {showDetails && <TableHead>Details</TableHead>}
+            <TableHead className="w-12"></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {users.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={showDetails ? 8 : 7} className="text-center py-8">
+                No users found matching your criteria
+              </TableCell>
+            </TableRow>
+          ) : (
+            users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <Checkbox
+                    checked={selectedUsers.includes(user.id)}
+                    onCheckedChange={(checked) =>
+                      handleSelectUser(user.id, checked as boolean)
+                    }
+                  />
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarFallback>{user.avatar}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">{user.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>{getRoleBadge(user.role)}</TableCell>
+                <TableCell>{getStatusBadge(user.status)}</TableCell>
+                <TableCell>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1 text-sm">
+                      <Phone className="h-3 w-3" />
+                      {user.phone}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="text-sm">
+                    <p>{user.city}</p>
+                    <p className="text-muted-foreground">{user.country}</p>
+                  </div>
+                </TableCell>
+                {showDetails && (
+                  <TableCell>
+                    {user.role === "owner" && (
+                      <div className="text-sm">
+                        <p>{user.properties} properties</p>
+                        <p className="text-muted-foreground">
+                          ${((user.totalRevenue || 0) / 1000000).toFixed(1)}M
+                        </p>
+                      </div>
+                    )}
+                    {user.role === "renter" && (
+                      <div className="text-sm">
+                        <p className="text-muted-foreground">
+                          ${((user.rentAmount || 0) / 1000000).toFixed(1)}M/mo
+                        </p>
+                        <Badge
+                          variant={
+                            user.paymentStatus === "paid"
+                              ? "default"
+                              : user.paymentStatus === "overdue"
+                              ? "destructive"
+                              : "secondary"
+                          }
+                          className="text-xs"
+                        >
+                          {user.paymentStatus}
+                        </Badge>
+                      </div>
+                    )}
+                  </TableCell>
+                )}
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => handleViewUser(user)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Details
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit User
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <Mail className="mr-2 h-4 w-4" />
+                        Send Email
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      {user.status === "active" ? (
+                        <DropdownMenuItem>
+                          <Ban className="mr-2 h-4 w-4" />
+                          Suspend User
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem>
+                          <CheckCircle className="mr-2 h-4 w-4" />
+                          Activate User
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => handleDeleteUser(user)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete User
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
@@ -242,172 +404,15 @@ export default function UsersPage() {
             </div>
 
             <TabsContent value="all" className="m-0">
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-12">
-                        <Checkbox
-                          checked={
-                            selectedUsers.length === filteredUsers.length &&
-                            filteredUsers.length > 0
-                          }
-                          onCheckedChange={handleSelectAll}
-                        />
-                      </TableHead>
-                      <TableHead>User</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Details</TableHead>
-                      <TableHead className="w-12"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredUsers.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={8} className="text-center py-8">
-                          No users found matching your criteria
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      filteredUsers.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell>
-                            <Checkbox
-                              checked={selectedUsers.includes(user.id)}
-                              onCheckedChange={(checked) =>
-                                handleSelectUser(user.id, checked as boolean)
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <Avatar>
-                                <AvatarFallback>{user.avatar}</AvatarFallback>
-                              </Avatar>
-                              <div>
-                                <p className="font-medium">{user.name}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {user.email}
-                                </p>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>{getRoleBadge(user.role)}</TableCell>
-                          <TableCell>{getStatusBadge(user.status)}</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-1 text-sm">
-                                <Mail className="h-3 w-3" />
-                                <span className="truncate max-w-[150px]">
-                                  {user.email}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                <Phone className="h-3 w-3" />
-                                {user.phone}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="text-sm">
-                              <p>{user.city}</p>
-                              <p className="text-muted-foreground">{user.country}</p>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {user.role === "owner" && (
-                              <div className="text-sm">
-                                <p>{user.properties} properties</p>
-                                <p className="text-muted-foreground">
-                                  ${((user.totalRevenue || 0) / 1000000).toFixed(1)}M
-                                </p>
-                              </div>
-                            )}
-                            {user.role === "renter" && (
-                              <div className="text-sm">
-                                <p className="text-muted-foreground">
-                                  ${((user.rentAmount || 0) / 1000000).toFixed(1)}M/mo
-                                </p>
-                                <Badge
-                                  variant={
-                                    user.paymentStatus === "paid"
-                                      ? "default"
-                                      : user.paymentStatus === "overdue"
-                                      ? "destructive"
-                                      : "secondary"
-                                  }
-                                  className="text-xs"
-                                >
-                                  {user.paymentStatus}
-                                </Badge>
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleViewUser(user)}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  View Details
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleEditUser(user)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Edit User
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Mail className="mr-2 h-4 w-4" />
-                                  Send Email
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                {user.status === "active" ? (
-                                  <DropdownMenuItem>
-                                    <Ban className="mr-2 h-4 w-4" />
-                                    Suspend User
-                                  </DropdownMenuItem>
-                                ) : (
-                                  <DropdownMenuItem>
-                                    <CheckCircle className="mr-2 h-4 w-4" />
-                                    Activate User
-                                  </DropdownMenuItem>
-                                )}
-                                <DropdownMenuItem
-                                  className="text-destructive"
-                                  onClick={() => handleDeleteUser(user)}
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete User
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+              {renderUserTable(filteredUsers, true)}
             </TabsContent>
 
             <TabsContent value="owners" className="m-0">
-              <div className="text-center py-8 text-muted-foreground">
-                Filter by owners to see property owners only
-              </div>
+              {renderUserTable(ownerUsers)}
             </TabsContent>
 
             <TabsContent value="renters" className="m-0">
-              <div className="text-center py-8 text-muted-foreground">
-                Filter by renters to see renters only
-              </div>
+              {renderUserTable(renterUsers)}
             </TabsContent>
           </Tabs>
         </CardContent>
